@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" />
-    <link rel="stylesheet" href="/Content/css/site.css"/>
+    <link rel="stylesheet" href="/Content/css/site.css" />
 
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.js"></script>
@@ -18,67 +18,51 @@
 </head>
 <body ng-controller="KeywordController">
     <div class="container">
-        <div class="page-header">
+        <div class="row">
             <h1>Mastermind</h1>
             <p>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</p>
         </div>
         <div class="row">
-            <div class='col-sm-3'>
+            <!--            <div class='col-sm-5'>
+                                <div class="form-group">
+                                    <div class='input-group' id='keyword'>
+                                        <span class="input-group-addon">Keyword</span>
+                                        <input type='text' class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>-->
+            <div class='col-sm-10'>
                 <div class="form-group">
-                    <div class='input-group' id='keyword'>
-                        <span class="input-group-addon">Keyword</span>
-                        <input type='text' class="form-control"/>
+                    <div class='input-group date' id='Date'>
+                        <span class="input-group-addon">Date</span>
+                        <input type='text' class="form-control" data-date-format="YYYY-MM-DD" />
                     </div>
                 </div>
             </div>
-            <div class='col-sm-3'>
-                <div class="form-group">
-                    <div class='input-group date' id='beginDate'>
-                        <span class="input-group-addon">Begin Date</span>
-                        <input type='text' class="form-control" data-date-format="YYYY-MM-DD hh:mm:ss"/>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-3'>
-                <div class="form-group">
-                    <div class='input-group date' id='endDate'>
-                        <span class="input-group-addon">End Date</span>
-                        <input type='text' class="form-control" data-date-format="YYYY-MM-DD hh:mm:ss"/>
-                    </div>
-                </div>
-            </div>
-            <div class='col-sm-3' align='right'>
-                <button type="button" class="btn btn-primary" ng-click="getKeywords()">Search</button>
+            <div class='col-sm-2' align='right'>
+                <button type="button" class="btn btn-default btn-search" ng-click="refreshData()">Search</button>
             </div>
             <script type="text/javascript">
                 $(function () {
-                    $('#beginDate').datetimepicker();
-                    $('#endDate').datetimepicker();
+                    $('#Date').datetimepicker();
+                    $('#Date').data('DateTimePicker').setDate((new Date()).toJSON().slice(0, 10));
                 });
             </script>
         </div>
-    </div>
 
-    <div class='container'>
         <p></p>
-    </div>
-    
-    <div class='container'>
+
         <div class="row">
-            <div class="col-md-2">
-                <ul>
-                    <li ng-repeat="keyword in Keywords">
-                        <span class="badge">{{ keyword.Value }}</span>
-                        {{ keyword.Key }}
-                    </li>
-                </ul>
+            <div class="col-md-3">
+                <p ng-repeat="keyword in Keywords" class="active keyword default" ng-click="getReviewsByKeyword(keyword.Morpheme)">
+                    {{ keyword.Word }}
+                    <span class="pull-right">{{ keyword.Count }}</span>
+                </p>
             </div>
-            <div class="col-md-10">
-                <div class="row">
-                    <b><font color="green">NAVER</font></b>
-                </div>
-                <div class="row">
-                    <b><font color="white">inven</font></b>
+            <div class="col-md-9">
+                <div ng-repeat="review in Reviews">
+                    {{review.Author}}/{{ review.TargetSite == "1" ? "inven" : "NAVER" }}/{{review.CategoryId}}/{{review.ArticleWrittenTime}}
+                    <p class="review">{{ review.Review }}</p>
                 </div>
             </div>
         </div>

@@ -2,9 +2,66 @@
     font-family: Tahoma, 맑은 고딕, Geneva, sans-serif;
     _font-family: 맑은 고딕, Tahoma, Geneva, sans-serif;
     background-color: black;
-    color: whitesmoke;
+    color: white;
 }
 
 .keyword {
-    font-size: 20px;
+    font-size: 43px;
+    line-height: 40px;
+    cursor: pointer;
+}
+
+.review {
+    font-size: 14px;
+    /*white-space: nowrap;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 15px 0;
+    min-height: 40px;
+    cursor: pointer;
+}
+
+.keyword.selected {
+    color: white;
+    background-color: #20b2aa;
+}
+
+.keyword.default {
+    color: #909090;
+    background-color: inherit;
+}
+
+.keyword:hover {
+    color: black;
+    background-color: #00bfff; 
+}
+
+.review:hover {
+    color: black;
+    background-color: #00bfff; 
+}
+
+.content {
+    font-size: 43px;
+    line-height: 40px;
+}
+
+.datepicker {
+    color: black;
+}
+
+.input-group-addon {
+    font-size: 43px;
+}
+
+.form-control {
+    font-size: 40px;
+    height: 57px;
+    background-color: transparent;
+    color: white;
+}
+
+.btn-search {
+    font-size: 27px;
+    height: 57px;
 }

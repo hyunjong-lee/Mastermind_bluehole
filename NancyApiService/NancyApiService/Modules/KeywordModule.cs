@@ -39,13 +39,14 @@ namespace NancyApiService
                 return View["Keywords.html"];
             };
 
-            Get["/keywords/{beginDate}/{endDate}"] = _ =>
+            Get["/keywords/{date}"] = _ =>
             {
-                var beginDate = DateTime.Parse((string)_.beginDate);
-                var endDate = DateTime.Parse((string)_.endDate);
+                var date = DateTime.Parse((string)_.date);
+                var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
                 var keywordsList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
-                    .Where(e => e.ArticleWrittenTime <= endDate)
+                    .Where(e => e.ArticleWrittenTime < endDate)
                     .Select(e => e.Keywords)
                     .ToList();
 
@@ -59,17 +60,89 @@ namespace NancyApiService
                         .Where(e => e.Contains("/"))
                         .Select(e => new { Word = e.Split('/')[0], Tag = e.Split('/')[1], })
                         .Where(e => e.Word.Length > 1)
-                        .Select(e => (e.Tag[0] == 'V' ? e.Word + "다" : e.Word))
+                        .Select(e => new { Word = (e.Tag[0] == 'V' ? e.Word + "다" : e.Word) + "::TAG::" + e.Word + "____" + e.Tag, })
                         .Distinct();
 
                     foreach (var keyword in keywordList)
                     {
-                        if (!wordCount.ContainsKey(keyword)) wordCount.Add(keyword, 0);
-                        wordCount[keyword] = wordCount[keyword] + 1;
+                        if (!wordCount.ContainsKey(keyword.Word)) wordCount.Add(keyword.Word, 0);
+                        wordCount[keyword.Word] = wordCount[keyword.Word] + 1;
                     }
                 }
 
-                return Response.AsJson(wordCount.OrderByDescending(e => e.Value).Take(50));
+                return Response.AsJson(
+                    wordCount
+                        .OrderByDescending(e => e.Value)
+                        .Select(e => new
+                        {
+                            WordInfo = e.Key.Split(new string[] {"::TAG::"}, StringSplitOptions.RemoveEmptyEntries),
+                            Count = e.Value,
+                        })
+                        .Select(e => new
+                        {
+                            Word = e.WordInfo[0],
+                            Morpheme = e.WordInfo[1],
+                            Count = e.Count,
+                        })
+                        .Take(100));
+            };
+
+            Get["/reviews/{date}"] = _ =>
+            {
+                var date = DateTime.Parse((string)_.date);
+                var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
+                var reviewList = _dataContext.Articles
+                    .Where(e => e.ArticleWrittenTime >= beginDate)
+                    .Where(e => e.ArticleWrittenTime < endDate)
+                    .Select(e => new { e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime})
+                    .ToList();
+
+                var resultReviews = reviewList
+                    .Select(e => new
+                    {
+                        Author = e.Author,
+                        TargetSite = e.TargetSite.ToString(),
+                        CategoryId = e.CategoryId,
+                        Link = e.Link,
+                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
+                    })
+                .Where(e => e.Review.Trim().Length > 0);
+
+                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime).Take(100));
+            };
+
+            Get["/reviewsByKeyword/{date}/{keyword}"] = _ =>
+            {
+                var date = DateTime.Parse((string)_.date);
+                var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
+                var reviewList = _dataContext.Articles
+                    .Where(e => e.ArticleWrittenTime >= beginDate)
+                    .Where(e => e.ArticleWrittenTime < endDate)
+                    .Select(e => new { e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime })
+                    .ToList();
+
+                var keyword = ((string)_.keyword).Replace("____", "/");
+
+                var resultReviews = reviewList
+                    .Where(e => XDocument.Parse(e.Keywords)
+                        .XPathSelectElements("//Document/Sentence")
+                        .SelectMany(t => t.Value.Split(','))
+                        .Any(t => t == keyword))
+                    .Select(e => new
+                    {
+                        Author = e.Author,
+                        TargetSite = e.TargetSite.ToString(),
+                        CategoryId = e.CategoryId,
+                        Link = e.Link,
+                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
+                    })
+                .Where(e => e.Review.Trim().Length > 0);
+
+                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime).Take(100));
             };
         }
     }
