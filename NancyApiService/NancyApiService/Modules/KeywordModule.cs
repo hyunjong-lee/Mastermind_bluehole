@@ -95,17 +95,18 @@ namespace NancyApiService
                 var reviewList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
                     .Where(e => e.ArticleWrittenTime < endDate)
-                    .Select(e => new { e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime})
+                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime})
                     .ToList();
 
                 var resultReviews = reviewList
                     .Select(e => new
                     {
+                        ArticleId = e.ArticleAutoId,
                         Author = e.Author,
                         TargetSite = e.TargetSite.ToString(),
                         CategoryId = e.CategoryId,
                         Link = e.Link,
-                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH시 mm분"),
                         Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
                     })
                 .Where(e => e.Review.Trim().Length > 0);
@@ -121,7 +122,7 @@ namespace NancyApiService
                 var reviewList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
                     .Where(e => e.ArticleWrittenTime < endDate)
-                    .Select(e => new { e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime })
+                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime })
                     .ToList();
 
                 var keyword = ((string)_.keyword).Replace("____", "/");
@@ -133,16 +134,23 @@ namespace NancyApiService
                         .Any(t => t == keyword))
                     .Select(e => new
                     {
+                        ArticleId = e.ArticleAutoId,
                         Author = e.Author,
                         TargetSite = e.TargetSite.ToString(),
                         CategoryId = e.CategoryId,
                         Link = e.Link,
-                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH시 mm분"),
                         Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
                     })
                 .Where(e => e.Review.Trim().Length > 0);
 
                 return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime).Take(100));
+            };
+
+            Get["/review/{articleAutoId}"] = _ =>
+            {
+                var articleAutoId = (int)_.articleAutoId;
+                return Response.AsJson(_dataContext.Articles.First(e => e.ArticleAutoId == articleAutoId));
             };
         }
     }

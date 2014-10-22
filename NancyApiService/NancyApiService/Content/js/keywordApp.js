@@ -1,9 +1,10 @@
-﻿var keywordApp = angular.module('keywordApp', []);
+﻿var keywordApp = angular.module('keywordApp', ['ui.bootstrap']);
 
-keywordApp.controller('KeywordController', function ($scope, KeywordService) {
+keywordApp.controller('KeywordController', function ($scope, $modal, $log, KeywordService) {
 
     $scope.Keywords = [];
     $scope.Reviews = [];
+    $scope.Review = {};
 
     $scope.refreshData = function (date) {
 
@@ -52,7 +53,71 @@ keywordApp.controller('KeywordController', function ($scope, KeywordService) {
             });
     };
 
+    $scope.getReview = function (articleAutoId, callbackFunc) {
+
+        console.log(articleAutoId);
+
+        KeywordService
+            .requestReview(articleAutoId)
+            .then(function (review) {
+
+                $scope.Review = review;
+                callbackFunc();
+
+            });
+    };
+
+    $scope.showReview = function(articleId) {
+
+        console.log(articleId);
+
+        $scope.getReview(articleId, $scope.popupReview);
+    };
+
+    $scope.popupReview = function() {
+
+        console.log("popupReview");
+
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContent.html',
+            controller: 'ModalController',
+            size: 'lg',
+            resolve: {
+                data : function () {
+                    return $scope.Review;
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            // TODO
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+
+    };
+
     $scope.refreshData("2014-10-01");
+});
+
+keywordApp.controller('ModalController', function ($scope, $modalInstance, $sce, data) {
+
+    $scope.data = data;
+
+    $scope.ok = function () {
+        $modalInstance.close('ok');
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.renderHtml = function (htmlCode) {
+
+        console.log(htmlCode);
+
+        return $sce.trustAsHtml(htmlCode);
+    };
 });
 
 keywordApp.service('KeywordService', function($http, $q) {
@@ -61,6 +126,7 @@ keywordApp.service('KeywordService', function($http, $q) {
         requestKeywords: requestKeywords,
         requestReviews: requestReviews,
         requestReviewsByKeyword: requestReviewsByKeyword,
+        requestReview: requestReview,
     });
 
     function requestKeywords(date) {
@@ -85,6 +151,15 @@ keywordApp.service('KeywordService', function($http, $q) {
         var request = $http({
             method: "get",
             url: ("/tera/reviewsByKeyword/" + date + "/" + keyword),
+        });
+
+        return (request.then(handleSuccess, handleError));
+    }
+
+    function requestReview(articleAutoId) {
+        var request = $http({
+            method: "get",
+            url: ("/tera/review/" + articleAutoId),
         });
 
         return (request.then(handleSuccess, handleError));

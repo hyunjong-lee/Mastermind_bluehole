@@ -59,10 +59,13 @@
   <ItemGroup>
     <Content Include="Content\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\css\site.css" />
+    <Content Include="Content\images\1.png" />
+    <Content Include="Content\images\2.png" />
     <Content Include="Content\images\naver.png" />
     <Content Include="Content\images\inven.png" />
     <Content Include="Content\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\js\keywordApp.js" />
+    <Content Include="Content\js\ui-bootstrap-tpls-0.11.2.js" />
     <Content Include="views\tera\Keyword\Keywords.html" />
     <Content Include="Web.config" />
   </ItemGroup>

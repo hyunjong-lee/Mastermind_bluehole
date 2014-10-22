@@ -2,7 +2,9 @@
 <html ng-app="keywordApp">
 <head>
     <meta charset="UTF-8" />
-    <title>Test Page</title>
+
+    <title>Keyword Analysis</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
@@ -14,7 +16,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/src/js/bootstrap-datetimepicker.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+
+    <script src="/Content/js/ui-bootstrap-tpls-0.11.2.js"></script>
     <script src="/Content/js/keywordApp.js"></script>
+
 </head>
 <body ng-controller="KeywordController">
     <div class="container">
@@ -23,14 +28,6 @@
             <p>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</p>
         </div>
         <div class="row">
-            <!--            <div class='col-sm-5'>
-                                <div class="form-group">
-                                    <div class='input-group' id='keyword'>
-                                        <span class="input-group-addon">Keyword</span>
-                                        <input type='text' class="form-control"/>
-                                    </div>
-                                </div>
-                            </div>-->
             <div class='col-sm-10'>
                 <div class="form-group">
                     <div class='input-group date' id='Date'>
@@ -52,6 +49,21 @@
 
         <p></p>
 
+        <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <img ng-src="/Content/images/{{ data.TargetSite }}.png"/>
+            <p>{{data.Author}}</p>
+            <h1 class="modal-title">{{ data.Title }}</h1>
+        </div>
+        <div class="modal-body">
+            <div ng-bind-html="renderHtml(data.ContentHtml)"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+        </script>
+
         <div class="row">
             <div class="col-md-3">
                 <p ng-repeat="keyword in Keywords" class="active keyword default" ng-click="getReviewsByKeyword(keyword.Morpheme)">
@@ -62,7 +74,7 @@
             <div class="col-md-9">
                 <div ng-repeat="review in Reviews">
                     {{review.Author}}/{{ review.TargetSite == "1" ? "inven" : "NAVER" }}/{{review.CategoryId}}/{{review.ArticleWrittenTime}}
-                    <p class="review">{{ review.Review }}</p>
+                    <p class="review" ng-click="showReview(review.ArticleId)">{{ review.Review }}</p>
                 </div>
             </div>
         </div>
