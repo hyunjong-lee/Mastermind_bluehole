@@ -15,7 +15,7 @@ namespace NancyApiService
     {
         private TeraArticlesDataContext _dataContext = new TeraArticlesDataContext();
 
-        public KeywordModule() : base("/tera")
+        public KeywordModule() : base("/")
         {
             JsonSettings.MaxJsonLength = Int32.MaxValue;
 
