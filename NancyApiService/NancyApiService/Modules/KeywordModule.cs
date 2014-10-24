@@ -39,14 +39,16 @@ namespace NancyApiService
                 return View["Keywords.html"];
             };
 
-            Get["/keywords/{date}"] = _ =>
+            Get["/keywords/{beginDate}/{endDate}"] = _ =>
             {
-                var date = DateTime.Parse((string)_.date);
+                var date = DateTime.Parse((string)_.beginDate);
                 var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                date = DateTime.Parse((string) _.endDate);
                 var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
                 var keywordsList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
                     .Where(e => e.ArticleWrittenTime < endDate)
+                    .Where(e => e.Keywords != null)
                     .Select(e => e.Keywords)
                     .ToList();
 
@@ -83,19 +85,20 @@ namespace NancyApiService
                             Word = e.WordInfo[0],
                             Morpheme = e.WordInfo[1],
                             Count = e.Count,
-                        })
-                        .Take(100));
+                        }));
             };
 
-            Get["/reviews/{date}"] = _ =>
+            Get["/reviews/{beginDate}/{endDate}"] = _ =>
             {
-                var date = DateTime.Parse((string)_.date);
+                var date = DateTime.Parse((string)_.beginDate);
                 var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                date = DateTime.Parse((string)_.endDate);
                 var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
                 var reviewList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
                     .Where(e => e.ArticleWrittenTime < endDate)
-                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime})
+                    .Where(e => e.Keywords != null)
+                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime, e.Title, })
                     .ToList();
 
                 var resultReviews = reviewList
@@ -107,22 +110,25 @@ namespace NancyApiService
                         CategoryId = e.CategoryId,
                         Link = e.Link,
                         ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH시 mm분"),
+                        Title = e.Title,
                         Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
                     })
                 .Where(e => e.Review.Trim().Length > 0);
 
-                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime).Take(100));
+                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime));
             };
 
-            Get["/reviewsByKeyword/{date}/{keyword}"] = _ =>
+            Get["/reviewsByKeyword/{beginDate}/{endDate}/{keyword}"] = _ =>
             {
-                var date = DateTime.Parse((string)_.date);
+                var date = DateTime.Parse((string)_.beginDate);
                 var beginDate = new DateTime(date.Year, date.Month, date.Day);
+                date = DateTime.Parse((string)_.endDate);
                 var endDate = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
                 var reviewList = _dataContext.Articles
                     .Where(e => e.ArticleWrittenTime >= beginDate)
                     .Where(e => e.ArticleWrittenTime < endDate)
-                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime })
+                    .Where(e => e.Keywords != null)
+                    .Select(e => new { e.ArticleAutoId, e.Keywords, e.TargetSite, e.Author, e.Link, e.CategoryId, e.ArticleWrittenTime, e.Title, })
                     .ToList();
 
                 var keyword = ((string)_.keyword).Replace("____", "/");
@@ -140,11 +146,12 @@ namespace NancyApiService
                         CategoryId = e.CategoryId,
                         Link = e.Link,
                         ArticleWrittenTime = e.ArticleWrittenTime.Value.ToString("yyyy-MM-dd HH시 mm분"),
+                        Title = e.Title,
                         Review = XDocument.Parse(e.Keywords).XPathSelectElement("//Document/HtmlCleanDocument").Value,
                     })
                 .Where(e => e.Review.Trim().Length > 0);
 
-                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime).Take(100));
+                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime));
             };
 
             Get["/review/{articleAutoId}"] = _ =>

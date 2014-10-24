@@ -9,8 +9,19 @@ body {
     color: white;
 }
 
+img {
+    max-width: 100%;
+}
+
+.chart {
+    background-color: #999999;
+    margin: 20px 0 20px 0;
+    color: white;
+}
+
 .modal-content {
     color: black;
+    max-width: 100%;
 }
 
 .keyword {

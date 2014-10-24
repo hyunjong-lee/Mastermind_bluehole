@@ -6,48 +6,58 @@ keywordApp.controller('KeywordController', function ($scope, $modal, $log, Keywo
     $scope.Reviews = [];
     $scope.Review = {};
 
-    $scope.refreshData = function (date) {
+    $scope.refreshData = function (beginDate, endDate) {
 
-        $scope.getKeywords(date);
-        $scope.getReviews(date);
+        $scope.getKeywords(beginDate, endDate);
+        $scope.getReviews(beginDate, endDate);
 
     };
 
-    $scope.getKeywords = function(date) {
+    $scope.getKeywords = function (beginDate, endDate) {
 
-        if (date == null)
-            date = $('#Date').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-        console.log(date);
+        if (beginDate == null)
+            beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        if (endDate == null)
+            endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+
+        console.log(beginDate);
+        console.log(endDate);
 
         KeywordService
-            .requestKeywords(date)
+            .requestKeywords(beginDate, endDate)
             .then(function (keywords) {
                 $scope.Keywords = keywords;
             });
     };
 
-    $scope.getReviews = function(date) {
+    $scope.getReviews = function (beginDate, endDate) {
 
-        if (date == null)
-            date = $('#Date').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-        console.log(date);
+        if (beginDate == null)
+            beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        if (endDate == null)
+            endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+
+        console.log(beginDate);
+        console.log(endDate);
 
         KeywordService
-            .requestReviews(date)
-            .then(function(reviews) {
-                $scope.Reviews= reviews;
+            .requestReviews(beginDate, endDate)
+            .then(function (reviews) {
+                $scope.Reviews = reviews;
             });
     };
 
-    $scope.getReviewsByKeyword = function(keyword) {
+    $scope.getReviewsByKeyword = function (keyword) {
 
-        var date = $('#Date').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        var beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        var endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
 
-        console.log(date);
+        console.log(beginDate);
+        console.log(endDate);
         console.log(keyword);
 
         KeywordService
-            .requestReviewsByKeyword(date, keyword)
+            .requestReviewsByKeyword(beginDate, endDate, keyword)
             .then(function (reviews) {
                 $scope.Reviews = reviews;
             });
@@ -67,23 +77,21 @@ keywordApp.controller('KeywordController', function ($scope, $modal, $log, Keywo
             });
     };
 
-    $scope.showReview = function(articleId) {
+    $scope.showReview = function (articleId) {
 
         console.log(articleId);
 
         $scope.getReview(articleId, $scope.popupReview);
     };
 
-    $scope.popupReview = function() {
-
-        console.log("popupReview");
+    $scope.popupReview = function () {
 
         var modalInstance = $modal.open({
-            templateUrl: 'myModalContent.html',
+            templateUrl: 'articleContent.html',
             controller: 'ModalController',
             size: 'lg',
             resolve: {
-                data : function () {
+                data: function () {
                     return $scope.Review;
                 }
             }
@@ -97,7 +105,8 @@ keywordApp.controller('KeywordController', function ($scope, $modal, $log, Keywo
 
     };
 
-    $scope.refreshData("2014-10-01");
+    var today = (new Date()).toJSON().slice(0, 10);
+    $scope.refreshData(today, today);
 });
 
 keywordApp.controller('ModalController', function ($scope, $modalInstance, $sce, data) {
@@ -113,14 +122,11 @@ keywordApp.controller('ModalController', function ($scope, $modalInstance, $sce,
     };
 
     $scope.renderHtml = function (htmlCode) {
-
-        console.log(htmlCode);
-
         return $sce.trustAsHtml(htmlCode);
     };
 });
 
-keywordApp.service('KeywordService', function($http, $q) {
+keywordApp.service('KeywordService', function ($http, $q) {
 
     return ({
         requestKeywords: requestKeywords,
@@ -129,28 +135,28 @@ keywordApp.service('KeywordService', function($http, $q) {
         requestReview: requestReview,
     });
 
-    function requestKeywords(date) {
+    function requestKeywords(beginDate, endDate) {
         var request = $http({
             method: "get",
-            url: ("/tera/keywords/" + date ),
+            url: ("/keywords/" + beginDate + "/" + endDate),
         });
 
         return (request.then(handleSuccess, handleError));
     }
 
-    function requestReviews(date) {
+    function requestReviews(beginDate, endDate) {
         var request = $http({
             method: "get",
-            url: ("/tera/reviews/" + date),
+            url: ("/reviews/" + beginDate + "/" + endDate),
         });
 
         return (request.then(handleSuccess, handleError));
     }
 
-    function requestReviewsByKeyword(date, keyword) {
+    function requestReviewsByKeyword(beginDate, endDate, keyword) {
         var request = $http({
             method: "get",
-            url: ("/tera/reviewsByKeyword/" + date + "/" + keyword),
+            url: ("/reviewsByKeyword/" + beginDate + "/" + endDate + "/" + keyword),
         });
 
         return (request.then(handleSuccess, handleError));
@@ -159,7 +165,7 @@ keywordApp.service('KeywordService', function($http, $q) {
     function requestReview(articleAutoId) {
         var request = $http({
             method: "get",
-            url: ("/tera/review/" + articleAutoId),
+            url: ("/review/" + articleAutoId),
         });
 
         return (request.then(handleSuccess, handleError));

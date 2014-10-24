@@ -66,7 +66,9 @@
     <Content Include="Content\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\js\keywordApp.js" />
     <Content Include="Content\js\ui-bootstrap-tpls-0.11.2.js" />
-    <Content Include="views\tera\Keyword\Keywords.html" />
+    <Content Include="views\Keyword\Keywords.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +88,7 @@
       <LastGenOutput>TeraArticles.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Properties\PublishProfiles\mastermind.pubxml" />
+    <None Include="Properties\PublishProfiles\filePub.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -102,7 +104,9 @@
       <DependentUpon>TeraArticles.dbml</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="views\tera\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
