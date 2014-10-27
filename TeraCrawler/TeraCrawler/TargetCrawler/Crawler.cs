@@ -76,9 +76,14 @@ namespace TeraCrawler.TargetCrawler
                         if (article.ArticleId == 0) continue;
 
                         // 기존 데이터가 존재하는지 확인한 후 페이지 건너뛰기
-                        if (context.Articles.Any(e => e.ArticleId == article.ArticleId))
+                        if (context.Articles.Any(e => e.Game == article.Game && e.TargetSite == article.TargetSite &&
+                            e.CategoryId == article.CategoryId && e.ArticleId == article.ArticleId))
                         {
-                            var prevArticleCount = context.Articles.Count(e => e.ArticleId < article.ArticleId);
+                            var prevArticleCount = context.Articles
+                                .Where(e => e.Game == article.Game)
+                                .Where(e => e.TargetSite == article.TargetSite)
+                                .Where(e => e.CategoryId == article.CategoryId)
+                                .Count(e => e.ArticleId < article.ArticleId);
                             jumpPagingSize = prevArticleCount / PagingSize();
 
                             continue;

@@ -50,7 +50,7 @@ namespace TeraCrawler
                     Logger.Log(ex);
                 }
 
-                Thread.Sleep(5000);
+                Thread.Sleep(60 * 1000);
 
                 using (var context = new TeraArticleDataContext())
                 {

@@ -55,15 +55,15 @@ namespace TeraCrawler.TargetCrawler
 
             var option = new ChromeOptions();
             option.AddExtension("3.7_0.crx");
-            driver = new ChromeDriver(chromeDriverService, option ); 
+            driver = new ChromeDriver(chromeDriverService, option );
 
-            while ( driver.WindowHandles.Count < 2 )
+            while (driver.WindowHandles.Count < 2)
             {
                 Thread.Sleep(100);
             }
 
             driver.SwitchTo().Window(driver.WindowHandles[1]);
-            
+
             WebDriverWait _wait = new WebDriverWait(driver, new TimeSpan(0, 1, 0));
 
             driver.Manage().Timeouts().ImplicitlyWait(new TimeSpan(0, 0, 10));
@@ -188,7 +188,7 @@ namespace TeraCrawler.TargetCrawler
             List<String> listCommentPageAddress = new List<string>();
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(article.RawHtml);
-            foreach( var node in htmlDoc.DocumentNode.SelectNodes("//*[@id=\"ct\"]/div[8]/ul/li[1]/a/span/em") )
+            var node = htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\"ct\"]/div/ul/li/a/span/em");
             {
                 int commentCount = Int32.Parse(node.InnerText);
                 // 네이버는 100개가 한 페이지
@@ -204,8 +204,10 @@ namespace TeraCrawler.TargetCrawler
             var comment = new Comment();
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(commentPageRawHtml);
+            if (htmlDoc.DocumentNode.SelectNodes("//*[@class=\"lst_wp\"]") == null)
+                return;
 
-            foreach (var node in htmlDoc.DocumentNode.SelectNodes("//*[@id=\"ct\"]/ul"))
+            foreach (var node in htmlDoc.DocumentNode.SelectNodes("//*[@class=\"lst_wp\"]"))
             {
                 // node로부터.
                 // li[1]/div/strong/a[1]       이름
@@ -213,10 +215,12 @@ namespace TeraCrawler.TargetCrawler
                 // li[1]/div/div[2]/span       내용
                 // 댓글의 댓글은 re
                 // 댓글의 댓글의 댓글부터는 re2
-                if (node.SelectNodes("li[1]/div/strong/a[1]") != null) { 
-                    comment.Author = node.SelectNodes("li[1]/div/strong/a[1]")[0].InnerText;
-                    comment.CommentWrittenTime = DateTime.Parse(node.SelectNodes("li[1]/div/strong/em")[0].InnerText);
-                    comment.ContentHtml = node.SelectNodes("li[1]/div/div[2]/span")[0].InnerText;
+                if (node.SelectNodes("strong/a") != null)
+                {
+                    comment.Author = node.SelectSingleNode("strong/a").InnerText;
+                    comment.CommentWrittenTime = DateTime.Parse(node.SelectSingleNode("strong/em").InnerText);
+                    comment.ContentHtml = node.SelectSingleNode("div[@class=\"clst_cont\"]/span").InnerText;
+                    
                     comments.Add(comment);
                 }
             }
