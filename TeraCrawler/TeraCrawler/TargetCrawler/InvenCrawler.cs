@@ -47,7 +47,13 @@ namespace TeraCrawler.TargetCrawler
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(rawHtml);
 
-            foreach (var articleNode in htmlDoc.DocumentNode.SelectNodes("//tr[@height=28 and @bgcolor='white']"))
+            var articleNodes = htmlDoc.DocumentNode.SelectNodes("//tr[@height=28 and @bgcolor='white']");
+            if (articleNodes == null)
+            {
+                yield break;
+            }
+
+            foreach (var articleNode in articleNodes)
             {
                 var link = articleNode.SelectSingleNode("td[@class='bbsSubject']").SelectSingleNode("a").Attributes["href"].Value;
                 const string token = "=&l=";

@@ -38,6 +38,8 @@ namespace TeraCrawler
                     {
                         sameCountCounter = 0;
                         crawler.Reset();
+
+                        Logger.Log("Reset crawler!");
                     }
 
                     crawler.CollectArticleList();

@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using System.Linq;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -133,10 +134,16 @@ namespace TeraCrawler.TargetCrawler
 
         public override IEnumerable<Article> ParsePagingPage(string rawHtml)
         {
-            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(rawHtml);
 
-            foreach (var articleNode in htmlDoc.DocumentNode.SelectNodes("//*[@id=\"article_lst_section\"]/ul[2]/li"))
+            var articleNodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"article_lst_section\"]/ul[2]/li");
+            if (articleNodes == null)
+            {
+                yield break;
+            }
+
+            foreach (var articleNode in articleNodes)
             {
                 var link = String.Format("http://m.cafe.naver.com/{0}",articleNode.SelectSingleNode("a").Attributes["href"].Value);
 
