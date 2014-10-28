@@ -59,6 +59,14 @@ namespace Preprocessor
                         // fetch article
                         var article = context.Articles.Where(e => e.ArticleAutoId > processedInfo.ProcessedArticleId).OrderBy(e => e.ArticleAutoId).First();
                         lastWorkArticleId = article.ArticleAutoId;
+
+                        if (article.ContentHtml == null)
+                        {
+                            processedInfo.ProcessedArticleId = article.ArticleAutoId;
+                            context.SubmitChanges();
+                            continue;
+                        }
+
                         #endregion
 
                         #region clean up text and make XML Document

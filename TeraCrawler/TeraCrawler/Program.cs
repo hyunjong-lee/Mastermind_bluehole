@@ -13,12 +13,13 @@ namespace TeraCrawler
         static void Main(string[] args)
         {
             // TeraCrawler.exe [Game] [Target Site] [Category ID]
-            if (args.Length != 3)
+            if (args.Length != 4)
             {
                 Logger.Log("Invalid execution parameters.");
-                Logger.Log("TeraCrawler.exe [Game] [Target Site] [Category ID]");
+                Logger.Log("TeraCrawler.exe [Game] [Target Site] [Category ID] [mode]");
                 Logger.Log("[Game] must be one of ({0})", string.Join(", ", Enum.GetValues(typeof (Games)).OfType<Games>()));
                 Logger.Log("[Target Site] must be one of ({0})", string.Join(", ", Enum.GetValues(typeof (TargetSites)).OfType<TargetSites>()));
+                Logger.Log("[mode] must be one of (normal, recovery)");
 
                 return;
             }
@@ -26,15 +27,16 @@ namespace TeraCrawler
             var game = (Games)Enum.Parse(typeof (Games), args[0]);
             var targetSite = (TargetSites)Enum.Parse(typeof (TargetSites), args[1]);
             var categoryId = int.Parse(args[2]);
+            var mode = args[3];
 
             var articleCount = 0;
             var sameCountCounter = 0;
-            var crawler = Crawler.Get(targetSite, categoryId);
+            var crawler = Crawler.Get(targetSite, categoryId, mode);
             while(true)
             {
                 try
                 {
-                    if (sameCountCounter == 10)
+                    if (mode == "normal" && sameCountCounter == 10)
                     {
                         sameCountCounter = 0;
                         crawler.Reset();
@@ -50,7 +52,7 @@ namespace TeraCrawler
                     Logger.Log(ex);
                 }
 
-                Thread.Sleep(5000);
+                Thread.Sleep(60 * 1000);
 
                 using (var context = new TeraArticleDataContext())
                 {

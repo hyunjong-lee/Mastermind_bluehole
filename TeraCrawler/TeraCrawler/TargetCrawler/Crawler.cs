@@ -20,6 +20,9 @@ namespace TeraCrawler.TargetCrawler
         internal WebHeaderCollection headerCollection { get; set; }
         internal Encoding encoding = Encoding.UTF8;
 
+        internal string Mode { get; set; }
+
+        private Random _rand = new Random(DateTime.Now.Millisecond);
 
         internal int CurrentWorkingPage = 1;
         internal ConcurrentQueue<Article> ArticleQueueToCrawl = new ConcurrentQueue<Article>();
@@ -30,7 +33,7 @@ namespace TeraCrawler.TargetCrawler
         }
 
         #region Generate
-        public static Crawler Get(TargetSites target, int categoryId)
+        public static Crawler Get(TargetSites target, int categoryId, string mode)
         {
             Crawler crawler = null;
 
@@ -56,6 +59,7 @@ namespace TeraCrawler.TargetCrawler
             }
 
             crawler.CategoryId = categoryId;
+            crawler.Mode = mode;
 
             return crawler;
         }
@@ -76,9 +80,19 @@ namespace TeraCrawler.TargetCrawler
                         if (article.ArticleId == 0) continue;
 
                         // 기존 데이터가 존재하는지 확인한 후 페이지 건너뛰기
-                        if (context.Articles.Any(e => e.ArticleId == article.ArticleId))
+                        if (
+                            Mode == "normal" &&
+                            context.Articles.Any(e =>
+                                e.Game == article.Game &&
+                                e.TargetSite == article.TargetSite &&
+                                e.CategoryId == article.CategoryId &&
+                                e.ArticleId == article.ArticleId))
                         {
-                            var prevArticleCount = context.Articles.Count(e => e.ArticleId < article.ArticleId);
+                            var prevArticleCount = context.Articles
+                                .Where(e => e.Game == article.Game)
+                                .Where(e => e.TargetSite == article.TargetSite)
+                                .Where(e => e.CategoryId == article.CategoryId)
+                                .Count(e => e.ArticleId < article.ArticleId);
                             jumpPagingSize = prevArticleCount / PagingSize();
 
                             continue;
@@ -88,7 +102,14 @@ namespace TeraCrawler.TargetCrawler
                             jumpPagingSize = 1;
                         }
 
-                        ArticleQueueToCrawl.Enqueue(article);
+                        if (!context.Articles.Any(e =>
+                                e.Game == article.Game &&
+                                e.TargetSite == article.TargetSite &&
+                                e.CategoryId == article.CategoryId &&
+                                e.ArticleId == article.ArticleId))
+                        {
+                            ArticleQueueToCrawl.Enqueue(article);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -114,6 +135,9 @@ namespace TeraCrawler.TargetCrawler
                     {
                     }
 
+                    // 큐에서 꺼내오고 잠깐 숨좀 돌리자
+                    Thread.Sleep(1000 * _rand.Next(3, 5));
+
                     try
                     {
                         var address = MakeArticlePageAddress(article.ArticleId);
@@ -138,6 +162,9 @@ namespace TeraCrawler.TargetCrawler
                         Logger.Log("Error occurred ArticleID: {0}, Link: {1}", article.ArticleId, article.Link);
                         Logger.Log(ex);
                     }
+
+                    // 작업 완료하고 잠깐 숨좀 돌리자
+                    Thread.Sleep(1000 * _rand.Next(1, 5));
 
                     //}, ArticleQueueToCrawl);
                 }
