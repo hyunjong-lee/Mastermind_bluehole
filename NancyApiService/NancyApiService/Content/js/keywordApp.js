@@ -2,170 +2,50 @@
 
 keywordApp.controller('KeywordController', function ($scope, $modal, $log, KeywordService) {
 
-    $scope.Keywords = [];
-    $scope.Reviews = [];
-    $scope.Review = {};
+    $scope.Keyword = "";
+    $scope.Morpheme = "";
 
-    $scope.refreshData = function (beginDate, endDate) {
-
-        $scope.getKeywords(beginDate, endDate);
-        $scope.getReviews(beginDate, endDate);
+    $scope.refreshData = function (morpheme) {
 
     };
 
-    $scope.getKeywords = function (beginDate, endDate) {
+    //$scope.getReviewsByKeyword = function (keyword) {
 
-        if (beginDate == null)
-            beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-        if (endDate == null)
-            endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+    //    var beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+    //    var endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
 
-        console.log(beginDate);
-        console.log(endDate);
+    //    console.log(beginDate);
+    //    console.log(endDate);
+    //    console.log(keyword);
 
-        KeywordService
-            .requestKeywords(beginDate, endDate)
-            .then(function (keywords) {
-                $scope.Keywords = keywords;
-            });
-    };
-
-    $scope.getReviews = function (beginDate, endDate) {
-
-        if (beginDate == null)
-            beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-        if (endDate == null)
-            endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-
-        console.log(beginDate);
-        console.log(endDate);
-
-        KeywordService
-            .requestReviews(beginDate, endDate)
-            .then(function (reviews) {
-                $scope.Reviews = reviews;
-            });
-    };
-
-    $scope.getReviewsByKeyword = function (keyword) {
-
-        var beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-        var endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
-
-        console.log(beginDate);
-        console.log(endDate);
-        console.log(keyword);
-
-        KeywordService
-            .requestReviewsByKeyword(beginDate, endDate, keyword)
-            .then(function (reviews) {
-                $scope.Reviews = reviews;
-            });
-    };
-
-    $scope.getReview = function (articleAutoId, callbackFunc) {
-
-        console.log(articleAutoId);
-
-        KeywordService
-            .requestReview(articleAutoId)
-            .then(function (review) {
-
-                $scope.Review = review;
-                callbackFunc();
-
-            });
-    };
-
-    $scope.showReview = function (articleId) {
-
-        console.log(articleId);
-
-        $scope.getReview(articleId, $scope.popupReview);
-    };
-
-    $scope.popupReview = function () {
-
-        var modalInstance = $modal.open({
-            templateUrl: 'articleContent.html',
-            controller: 'ModalController',
-            size: 'lg',
-            resolve: {
-                data: function () {
-                    return $scope.Review;
-                }
-            }
-        });
-
-        modalInstance.result.then(function () {
-            // TODO
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-
-    };
-
-    var today = (new Date()).toJSON().slice(0, 10);
-    $scope.refreshData(today, today);
-});
-
-keywordApp.controller('ModalController', function ($scope, $modalInstance, $sce, data) {
-
-    $scope.data = data;
-
-    $scope.ok = function () {
-        $modalInstance.close('ok');
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
+    //    KeywordService
+    //        .requestReviewsByKeyword(beginDate, endDate, keyword)
+    //        .then(function (reviews) {
+    //            $scope.Reviews = reviews;
+    //        });
+    //};
 
     $scope.renderHtml = function (htmlCode) {
         return $sce.trustAsHtml(htmlCode);
     };
+
+    var morpheme = decodeURIComponent(location.pathname.match(/\/keyword\/(.*)/)[1]);
+    console.log(morpheme);
+
+    $scope.Keyword = morpheme;
+    $scope.Morpheme = morpheme;
+    $scope.refreshData(morpheme);
 });
 
 keywordApp.service('KeywordService', function ($http, $q) {
 
     return ({
-        requestKeywords: requestKeywords,
-        requestReviews: requestReviews,
-        requestReviewsByKeyword: requestReviewsByKeyword,
-        requestReview: requestReview,
     });
 
     function requestKeywords(beginDate, endDate) {
         var request = $http({
             method: "get",
-            url: ("/keywords/" + beginDate + "/" + endDate),
-        });
-
-        return (request.then(handleSuccess, handleError));
-    }
-
-    function requestReviews(beginDate, endDate) {
-        var request = $http({
-            method: "get",
-            url: ("/reviews/" + beginDate + "/" + endDate),
-        });
-
-        return (request.then(handleSuccess, handleError));
-    }
-
-    function requestReviewsByKeyword(beginDate, endDate, keyword) {
-        var request = $http({
-            method: "get",
-            url: ("/reviewsByKeyword/" + beginDate + "/" + endDate + "/" + keyword),
-        });
-
-        return (request.then(handleSuccess, handleError));
-    }
-
-    function requestReview(articleAutoId) {
-        var request = $http({
-            method: "get",
-            url: ("/review/" + articleAutoId),
+            url: ("/keyword/" + beginDate + "/" + endDate),
         });
 
         return (request.then(handleSuccess, handleError));

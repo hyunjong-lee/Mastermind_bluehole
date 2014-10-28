@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
-<html ng-app="keywordApp">
+<html ng-app="indexApp">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         
-        <title>Keyword Analysis</title>
+        <title>Mastermind</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
@@ -20,13 +20,13 @@
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
         <script src="/Content/js/ui-bootstrap-tpls-0.11.2.js"></script>
-        <script src="/Content/js/keywordApp.js"></script>
+        <script src="/Content/js/indexApp.js"></script>
 
     </head>
-<body ng-controller="KeywordController">
+<body ng-controller="IndexController">
     <div class="container">
         <div class="page-header">
-            <h1>Mastermind <small>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</small></h1>
+            <h1><a href="/">Mastermind</a> <small>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</small></h1>
         </div>
         <div class="row">
             <div class='col-sm-5'>
@@ -83,15 +83,18 @@
                     게시글 수
                     <span class="pull-right">{{ Reviews.length }}</span>
                 </p>
-                <p ng-repeat="keyword in Keywords" class="active keyword default" ng-click="getReviewsByKeyword(keyword.Morpheme)">
-                    {{ keyword.Word }}
-                    <span class="pull-right">{{ keyword.Count }}</span>
+                <p ng-repeat="keyword in Keywords" class="active keyword default">
+                    <a ng-href="keyword/{{keyword.Morpheme}}">
+                        {{ keyword.Word }}
+                        <span class="pull-right">{{ keyword.Count }}</span>
+                    </a>
                 </p>
             </div>
             <div class="col-md-9">
                 <div ng-repeat="review in Reviews">
                     {{review.Author}}/{{ review.TargetSite == "1" ? "inven" : "NAVER" }}/{{review.CategoryId}}/{{review.ArticleWrittenTime}}
-                    <p class="review" ng-click="showReview(review.ArticleId)">{{ review.Review }}</p>
+                    <!--<p class="review" ng-click="showReview(review.ArticleId)">{{ review.Review }}</p>-->
+                    <p class="review"><a ng-href="article/{{review.ArticleId}}">{{ review.Review }}</a></p>
                 </div>
             </div>
         </div>

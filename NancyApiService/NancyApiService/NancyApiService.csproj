@@ -64,12 +64,18 @@
     <Content Include="Content\images\naver.png" />
     <Content Include="Content\images\inven.png" />
     <Content Include="Content\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="Content\js\articleApp.js" />
+    <Content Include="Content\js\indexApp.js" />
     <Content Include="Content\js\keywordApp.js" />
     <Content Include="Content\js\ui-bootstrap-tpls-0.11.2.js" />
-    <Content Include="views\Keyword\Keywords.html">
+    <Content Include="views\Article\Article.html" />
+    <Content Include="views\Index\Index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Web.config" />
+    <Content Include="views\Keyword\Keyword.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataModel\TeraArticles.designer.cs">
@@ -78,6 +84,8 @@
       <DependentUpon>TeraArticles.dbml</DependentUpon>
     </Compile>
     <Compile Include="Helper\DateTimeHelper.cs" />
+    <Compile Include="Modules\ArticleModule.cs" />
+    <Compile Include="Modules\IndexModule.cs" />
     <Compile Include="Modules\KeywordModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

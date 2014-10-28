@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html ng-app="keywordApp">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        
+        <title>Mastermind - Keyword</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" />
+        <link rel="stylesheet" href="/Content/css/site.css" />
+
+        <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.1/moment.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/src/js/bootstrap-datetimepicker.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+        <script src="/Content/js/ui-bootstrap-tpls-0.11.2.js"></script>
+        <script src="/Content/js/keywordApp.js"></script>
+
+    </head>
+<body ng-controller="KeywordController">
+    <div class="container">
+        
+        <div class="page-header">
+            <h1><a href="/">Mastermind</a> <small>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</small></h1>
+        </div>
+
+        <div class="page-header">
+            <h1>선택 형태소<small>{{ Morpheme }}</small></h1>
+        </div>
+
+        <div class="row">
+            <div class='col-sm-12'>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">단어 분포</div>
+                    <div class="panel-body">단어 분포 그래프 그리기</div>
+                </div>
+            </div>
+        </div>
+       
+        <div class="row">
+            <div class='col-sm-12'>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">연관 단어</div>
+                    <div class="panel-body">연관 단어 보여주기</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class='col-sm-12'>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">연관 문서 목록</div>
+                    <div class="panel-body">연관 문서 보여주기</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
