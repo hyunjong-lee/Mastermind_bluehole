@@ -42,6 +42,9 @@ namespace NancyApiService.DataModel
     partial void InsertComment(Comment instance);
     partial void UpdateComment(Comment instance);
     partial void DeleteComment(Comment instance);
+    partial void InsertMorphemeIndexer(MorphemeIndexer instance);
+    partial void UpdateMorphemeIndexer(MorphemeIndexer instance);
+    partial void DeleteMorphemeIndexer(MorphemeIndexer instance);
     #endregion
 		
 		public TeraArticlesDataContext() : 
@@ -103,6 +106,14 @@ namespace NancyApiService.DataModel
 			get
 			{
 				return this.GetTable<Comment>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MorphemeIndexer> MorphemeIndexers
+		{
+			get
+			{
+				return this.GetTable<MorphemeIndexer>();
 			}
 		}
 	}
@@ -906,6 +917,92 @@ namespace NancyApiService.DataModel
 					this._DislikeCount = value;
 					this.SendPropertyChanged("DislikeCount");
 					this.OnDislikeCountChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MorphemeIndexer")]
+	public partial class MorphemeIndexer : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Morpheme;
+		
+		private string _DocumentSet;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMorphemeChanging(string value);
+    partial void OnMorphemeChanged();
+    partial void OnDocumentSetChanging(string value);
+    partial void OnDocumentSetChanged();
+    #endregion
+		
+		public MorphemeIndexer()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Morpheme", DbType="NVarChar(100) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Morpheme
+		{
+			get
+			{
+				return this._Morpheme;
+			}
+			set
+			{
+				if ((this._Morpheme != value))
+				{
+					this.OnMorphemeChanging(value);
+					this.SendPropertyChanging();
+					this._Morpheme = value;
+					this.SendPropertyChanged("Morpheme");
+					this.OnMorphemeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DocumentSet", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string DocumentSet
+		{
+			get
+			{
+				return this._DocumentSet;
+			}
+			set
+			{
+				if ((this._DocumentSet != value))
+				{
+					this.OnDocumentSetChanging(value);
+					this.SendPropertyChanging();
+					this._DocumentSet = value;
+					this.SendPropertyChanged("DocumentSet");
+					this.OnDocumentSetChanged();
 				}
 			}
 		}

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using NancyApiService.DataModel;
 using Nancy.Json;
+using NancyApiService.Helper;
 
 namespace NancyApiService.Modules
 {
@@ -22,6 +23,11 @@ namespace NancyApiService.Modules
             };
 
             Get["/{articleId}"] = _ =>
+            {
+                return View["Article.html"];
+            };
+
+            Get["/{articleId}/{beginDate}/{endDate}"] = _ =>
             {
                 return View["Article.html"];
             };
@@ -72,8 +78,45 @@ namespace NancyApiService.Modules
 
             Get["/api/Author/{articleId}"] = _ =>
             {
-                // 저자 관련 정보 분석하여 보여주기
-                return null;
+                int articleId = int.Parse(_.articleId.ToString());
+                var article = _dataContext.Articles.First(e => e.ArticleAutoId == articleId);
+
+                var author = article.Author;
+                var authorWrittenList = _dataContext.Articles
+                    .Where(e => e.Author == author)
+                    .Select(e => new
+                    {
+                        e.ArticleWrittenTime,
+                    })
+                    .ToList()
+                    .Select(e => e.ArticleWrittenTime.Value.DayOfWeek)
+                    .GroupBy(e => e)
+                    .OrderBy(e => e.Key)
+                    .Select(e => new
+                    {
+                        DayOfWeek = e.Key,
+                        Count = e.Count(),
+                    })
+                    .ToDictionary(e => e.DayOfWeek, e => e.Count);
+
+                var dateOfWeekCountDic = new Dictionary<DayOfWeek, int>();
+                dateOfWeekCountDic.Add(DayOfWeek.Sunday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Monday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Tuesday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Wednesday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Thursday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Friday, 0);
+                dateOfWeekCountDic.Add(DayOfWeek.Saturday, 0);
+                foreach (var writtenInfo in authorWrittenList)
+                {
+                    dateOfWeekCountDic[writtenInfo.Key] = writtenInfo.Value;
+                }
+                
+                return Response.AsJson(new {
+                    TotalCount = authorWrittenList.Sum(e => e.Value),
+                    Labels = new List<string> { "일", "월", "화", "수", "목", "금", "토"},
+                    Data = dateOfWeekCountDic.Select(e => e.Value),
+                });
             };
         }
     }

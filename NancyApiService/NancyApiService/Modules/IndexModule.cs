@@ -99,7 +99,7 @@ namespace NancyApiService.Modules
                     })
                 .Where(e => e.Review.Trim().Length > 0);
 
-                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime));
+                return Response.AsJson(resultReviews.OrderByDescending(e => e.ArticleWrittenTime));
             };
 
             Get["/reviewsByKeyword/{beginDate}/{endDate}/{keyword}"] = _ =>
@@ -135,7 +135,7 @@ namespace NancyApiService.Modules
                     })
                 .Where(e => e.Review.Trim().Length > 0);
 
-                return Response.AsJson(resultReviews.OrderBy(e => e.ArticleWrittenTime));
+                return Response.AsJson(resultReviews.OrderByDescending(e => e.ArticleWrittenTime));
             };
 
             Get["/review/{articleAutoId}"] = _ =>

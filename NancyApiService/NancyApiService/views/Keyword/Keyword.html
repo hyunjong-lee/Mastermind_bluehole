@@ -19,7 +19,9 @@
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
-        <script src="/Content/js/ui-bootstrap-tpls-0.11.2.js"></script>
+        <script src="/Content/js/Chart.js"></script>
+        <script src="/Content/js/angles.js"></script>
+
         <script src="/Content/js/keywordApp.js"></script>
 
     </head>
@@ -30,15 +32,51 @@
             <h1><a href="/">Mastermind</a> <small>인벤 및 네이버 데이터를 활용한 사용자 반응 확인하기</small></h1>
         </div>
 
-        <div class="page-header">
-            <h1>선택 형태소<small>{{ Morpheme }}</small></h1>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="keyword" align="center" style="vertical-align: middle;">
+                    <b>{{ Keyword }}</b>
+                </div>
+            </div>
+            <div class='col-sm-4'>
+                <div class="form-group">
+                    <div class='input-group date' id='beginDate'>
+                        <span class="input-group-addon">Begin</span>
+                        <input type='text' class="form-control" data-date-format="YYYY-MM-DD" />
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-4'>
+                <div class="form-group">
+                    <div class='input-group date' id='endDate'>
+                        <span class="input-group-addon">End</span>
+                        <input type='text' class="form-control" data-date-format="YYYY-MM-DD" />
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-2' align='right'>
+                <button type="button" class="btn btn-default btn-search" ng-click="refreshData()">Search</button>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    $('#beginDate').datetimepicker();
+                    $('#beginDate').data('DateTimePicker').setDate((new Date()).toJSON().slice(0, 10));
+
+                    $('#endDate').datetimepicker();
+                    $('#endDate').data('DateTimePicker').setDate((new Date()).toJSON().slice(0, 10));
+                });
+            </script>
         </div>
+
+
 
         <div class="row">
             <div class='col-sm-12'>
                 <div class="panel panel-warning">
                     <div class="panel-heading">단어 분포</div>
-                    <div class="panel-body">단어 분포 그래프 그리기</div>
+                    <div class="panel-body" align="center">
+                        <canvas linechart options="myChartOptions" data="wordFrequencyData" width="1100" height="300"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,7 +85,8 @@
             <div class='col-sm-12'>
                 <div class="panel panel-warning">
                     <div class="panel-heading">연관 단어</div>
-                    <div class="panel-body">연관 단어 보여주기</div>
+                    <div class="panel-body">
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,8 +94,13 @@
         <div class="row">
             <div class='col-sm-12'>
                 <div class="panel panel-warning">
-                    <div class="panel-heading">연관 문서 목록</div>
-                    <div class="panel-body">연관 문서 보여주기</div>
+                    <div class="panel-heading">연관 문서 목록 ({{ RelatedArticles.length }})</div>
+                    <div class="panel-body">
+                        <div ng-repeat="review in RelatedArticles">
+                            {{review.Author}}/{{ review.TargetSite == "1" ? "inven" : "NAVER" }}/{{review.CategoryId}}/{{review.ArticleWrittenTime}}
+                            <p class="review"><a ng-href="/article/{{review.ArticleId}}">{{ review.Review }}</a></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

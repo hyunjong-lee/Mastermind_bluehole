@@ -26,5 +26,11 @@
         <elementListCompartment Id="a0a90332-64fb-4b74-b459-dcd2fd8915b3" absoluteBounds="0.765, 6.21, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="6ca490c6-79fb-431b-a689-2b8710ea9fef" absoluteBounds="3.625, 5.875, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/TeraArticlesDataContext/MorphemeIndexer" />
+      <nestedChildShapes>
+        <elementListCompartment Id="02a44ae7-29d0-4495-840f-53c02314d7e5" absoluteBounds="3.64, 6.335, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

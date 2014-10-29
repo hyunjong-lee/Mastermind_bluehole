@@ -83,18 +83,17 @@
                     게시글 수
                     <span class="pull-right">{{ Reviews.length }}</span>
                 </p>
-                <p ng-repeat="keyword in Keywords" class="active keyword default">
-                    <a ng-href="keyword/{{keyword.Morpheme}}">
-                        {{ keyword.Word }}
+                <p ng-repeat="keyword in Keywords" class="active keyword default" ng-click="goKeyword(keyword.Morpheme)">
+                    {{ keyword.Word }}
                         <span class="pull-right">{{ keyword.Count }}</span>
-                    </a>
                 </p>
             </div>
             <div class="col-md-9">
                 <div ng-repeat="review in Reviews">
                     {{review.Author}}/{{ review.TargetSite == "1" ? "inven" : "NAVER" }}/{{review.CategoryId}}/{{review.ArticleWrittenTime}}
                     <!--<p class="review" ng-click="showReview(review.ArticleId)">{{ review.Review }}</p>-->
-                    <p class="review"><a ng-href="article/{{review.ArticleId}}">{{ review.Review }}</a></p>
+                    <!--<p class="review"><a ng-href="article/{{review.ArticleId}}">{{ review.Review }}</a></p>-->
+                    <p class="review" ng-click="goArticle(review.ArticleId)">{{ review.Review }}</p>
                 </div>
             </div>
         </div>

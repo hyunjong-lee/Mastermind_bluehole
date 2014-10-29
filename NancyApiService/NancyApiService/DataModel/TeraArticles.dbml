@@ -44,4 +44,10 @@
       <Column Name="DislikeCount" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.MorphemeIndexer" Member="MorphemeIndexers">
+    <Type Name="MorphemeIndexer">
+      <Column Name="Morpheme" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DocumentSet" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+    </Type>
+  </Table>
 </Database>

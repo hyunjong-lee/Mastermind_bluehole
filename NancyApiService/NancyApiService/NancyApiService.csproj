@@ -63,8 +63,10 @@
     <Content Include="Content\images\2.png" />
     <Content Include="Content\images\naver.png" />
     <Content Include="Content\images\inven.png" />
+    <Content Include="Content\js\angles.js" />
     <Content Include="Content\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\js\articleApp.js" />
+    <Content Include="Content\js\Chart.js" />
     <Content Include="Content\js\indexApp.js" />
     <Content Include="Content\js\keywordApp.js" />
     <Content Include="Content\js\ui-bootstrap-tpls-0.11.2.js" />

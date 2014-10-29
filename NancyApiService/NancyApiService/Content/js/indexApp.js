@@ -105,6 +105,38 @@ indexApp.controller('IndexController', function ($scope, $modal, $log, IndexServ
 
     };
 
+    $scope.goArticle = function (articleId) {
+
+        var beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        var endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+
+        console.log(articleId);
+        console.log(beginDate);
+        console.log(endDate);
+
+        window.open(
+            ("/article/" + articleId + "/" + beginDate + "/" + endDate),
+            "_self"
+        );
+
+    };
+
+    $scope.goKeyword = function (morpheme) {
+
+        var beginDate = $('#beginDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+        var endDate = $('#endDate').data('DateTimePicker').getDate().format("YYYY-MM-DD");
+
+        console.log(morpheme);
+        console.log(beginDate);
+        console.log(endDate);
+
+        window.open(
+            ("/keyword/" + morpheme + "/" + beginDate + "/" + endDate),
+            "_self"
+        );
+
+    };
+
     var today = (new Date()).toJSON().slice(0, 10);
     $scope.refreshData(today, today);
 });
