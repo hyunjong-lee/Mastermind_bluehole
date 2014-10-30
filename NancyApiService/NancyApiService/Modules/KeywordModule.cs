@@ -87,7 +87,63 @@ namespace NancyApiService
                     .Where(e => e.Date < endDate)
                     .ToList();
 
-                return null;
+                var totalMorphemeBag = new List<string>();
+                var sameSentenceMorphemeBag = new List<string>();
+                foreach (var relatedArticle in relatedDocumentList)
+                {
+                    var articleAutoId = relatedArticle.ArticleAutoId;
+                    var article = _dataContext.Articles.First(e => e.ArticleAutoId == articleAutoId);
+
+                    var xDoc = XDocument.Parse(article.Keywords);
+                    var sentenceMorphemeList = xDoc.XPathSelectElements("//Document/Sentence").Select(t => t.Value.Split(','));
+
+                    totalMorphemeBag.AddRange(sentenceMorphemeList.SelectMany(e => e));
+                    sameSentenceMorphemeBag.AddRange(sentenceMorphemeList.Where(e => e.Contains(morpheme)).SelectMany(e => e));
+                }
+
+                var closeWordCount = sameSentenceMorphemeBag
+                    .Where(e => e.Length > 0)
+                    .GroupBy(e => e)
+                    .Select(e => new
+                    {
+                        Word = e.Key.Split('/')[0],
+                        Tag = e.Key.Split('/')[1],
+                        Count = e.Count(),
+                    })
+                    .Where(e => e.Word.Length > 1)
+                    .Select(e => new
+                    {
+                       Word = (e.Tag[0] == 'V' ? e.Word + "다" : e.Word),
+                       Tag = e.Tag,
+                       Count = e.Count,
+                    })
+                    .OrderByDescending(e => e.Count)
+                    .Where(e => e.Count > 1);
+
+                var relatedWordCount = totalMorphemeBag
+                    .Where(e => e.Length > 0)
+                    .GroupBy(e => e)
+                    .Select(e => new
+                    {
+                        Word = e.Key.Split('/')[0],
+                        Tag = e.Key.Split('/')[1],
+                        Count = e.Count(),
+                    })
+                    .Where(e => e.Word.Length > 1)
+                    .Select(e => new
+                    {
+                        Word = (e.Tag[0] == 'V' ? e.Word + "다" : e.Word),
+                        Tag = e.Tag,
+                        Count = e.Count,
+                    })
+                    .OrderByDescending(e => e.Count)
+                    .Where(e => e.Count > 1);
+
+                return Response.AsJson(new
+                {
+                    CloseWordList = closeWordCount,
+                    RelatedWordList = relatedWordCount,
+                });
             };
 
             Get["/relatedArticles/{morpheme}/{beginDate}/{endDate}"] = _ =>

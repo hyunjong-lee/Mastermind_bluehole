@@ -86,6 +86,14 @@
                 <div class="panel panel-warning">
                     <div class="panel-heading">연관 단어</div>
                     <div class="panel-body">
+                        <div>
+                            <div class="col-sm-6" style="height: 300px; overflow: auto;">
+                                    <p class="keyword" ng-repeat="word in RelatedWords.CloseWordList">{{ word.Word }} / {{ word.Count }}</p>
+                            </div>
+                            <div class="col-sm-6" style="height: 300px; overflow: auto;">
+                                    <p class="keyword" ng-repeat="word in RelatedWords.RelatedWordList">{{ word.Word }} / {{ word.Count }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
